@@ -2,7 +2,10 @@ name: Deploy Website
 
 on:
   push:
-    branches: [ main ]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/deploy_website.yml'
+      - 'Readme.md'
 
 permissions:
   contents: write
