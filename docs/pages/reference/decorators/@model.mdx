@@ -1,0 +1,28 @@
+# @model
+
+Classes marked with `@model` decorator are schema definitions and the main point to query the database.
+
+```typescript
+function model<T>(options: ModelOptions): ClassDecorator
+```
+
+### ModelOptions
+The decorator accepts an object with the following properties:
+
+```typescript
+export interface ModelOptions<T> {
+  collection?: string
+  indexes?: ModelIndex<T>[]
+  connection?: Connection
+}
+```
+Options
+
+| Name         | Type              | Description                                                                                                                                                                           |
+|--------------|-------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `collection` | `string`          | By default a collection name is generated from the class name. You can change this by providing a custom name.                                                                        |
+| `indexes`    | `ModelIndex<T>[]` | An array of indexes to apply on this collection. The same thing can be achieved using `@index` decorator. Basic indexes like `unique` can also be specified in the `@field` decorator |
+| `connection` | `Connection`      | If this collection is in a different database, the connection object can be specified here.                                                                                           |
+
+
+[WIP]

@@ -1,0 +1,250 @@
+import {Callout} from "nextra-theme-docs";
+
+# Queries
+Mongur provides a fluent api to query/update/delete data on Mongodb.
+
+Let's consider the following model.
+
+```typescript
+
+import {model, Model, field} from "mongur";
+
+
+@model()
+class User extends Model<User>() {
+
+  @field()
+  name!: string;
+
+  @field()
+  email!: string;
+
+  @field()
+  active?: boolean
+
+}
+```
+
+## Insert documents
+
+### Insert a single document
+Single document can be inserted in 2 ways: using `save` method on model instance or using `create` class method on the model.
+
+```typescript
+const user = new User({name: "John Doe", email: "john@example.com"})
+await user.save()
+
+// Or use the create method.
+const user = await User.create({name: "John Doe", email: "john@example.com"})
+
+// `create` method also accepts model instance
+const savedUser = await User.create(user)
+```
+### Insert multiple documents
+
+`create` class method accepts an array.
+
+```typescript
+// returns inserted users
+const users = await User.create([{name: "John Doe", email: "john@example.com"}, {name: "Jane Doe", email: "jane@example.com"}])
+
+// or insert 2 object instances
+const user1 = new User({name: "John Doe", email: "john@example.com"})
+const user2 = new User({name: "Jane Doe", email: "jane@example.com"})
+const users = await User.create([user1, user2])
+```
+
+## Get documents
+
+### Get multiple documents
+Use `find()` to return multiple documents.
+```typescript
+// Get all users, returns array
+const users = await User.find()
+
+// Get all active users, returns array
+const users = await User.find({active: true})
+```
+
+### Limit results
+Use `skip()` and `limit()` to limit the number of documents returned.
+```typescript
+// Return 10 users, skip first 10 users
+const users = await User.find({active: true}).skip(10).limit(10)
+```
+
+### Sort results
+Use `sort()` method to sort results.
+```typescript
+// Sort by name ascending, and email descending
+const users = await User.find({active: true}).sort("name", "-email")
+
+// Same query but use object to specify sort
+const users = await User.find({active: true}).sort({name: 1, email: -1})
+```
+
+### Get only specific fields
+Use `select()` to get specific fields
+```typescript
+// Return 10 users, skip first 10 users
+const users = await User.find({active: true}).select("name", "email")
+```
+
+
+### Get a single document
+use `one()` to get a single document.
+
+```typescript
+// Get a user by email, returns one user or null
+const user = await User.find({email: "name@example.com"}).one()
+
+// Get a user by email, returns one user, throws error if not exists
+const user = await User.find({email: "name@example.com"}).one().orThrow()
+```
+
+<Callout type="info">
+  `select`, `skip`, `min`, `max`, `limit`, `one`, `sort` these methods are chainable.
+</Callout>
+
+## Update documents
+
+### Update multiple documents
+
+Use `find()` to filter out which documents to update, then use `update()` to update the documents.
+```typescript
+// Make all users active
+const updateResult = await User.find().update({$set: {active: true}})
+
+// Make all inactive users active
+const users = await User.find({active: false}).update({$set: {active: true}})
+```
+
+### Update a single document
+
+Just like updating multiple documents but call `one()` at the end.
+```typescript
+// Update one user
+const updateResult = await User.find({email: "jane@example.com"}).update({$set: {active: true}}).one()
+```
+
+Updating can be done on model instance object too.
+```typescript
+// create user
+const user = new User({name: "John Doe", email: "john@example.com"})
+await user.save()
+
+// now change something
+user.email = "doe@example.com"
+await user.save() // This will only update the changed fields.
+```
+
+Calling `save()` method on an object that was already saved, or fetched using `find()` automatically updates
+the changed fields. If you want to update only specific fields, it can done by passing the field names in the `save` method
+
+```typescript
+await user.save(["email", "name"]) // This will update email and name fields
+```
+
+### Update and fetch
+
+Mongodb native sdk has a method called `findOneAndUpdate`. It returns the document when updating,
+either the document before update or the updated document based on the supplied parameter. The same can be achieved in Mongur
+using the `return()` method.
+```typescript
+// Update one user and return the document
+const user = await User.find({email: "jane@example.com"}).update({$set: {active: true}}).one().return()
+```
+
+## Delete document
+
+### Delete multiple documents
+
+Use `find()` to filter out which documents to delete, then use `delete()` to delete the documents.
+```typescript
+// Delete all users
+const deleteResult = await User.find().delete()
+
+// Delete inactive users
+const users = await User.find({active: false}).delete()
+```
+
+### Delete a single document
+
+Just like deleting multiple documents but call `one()` at the end.
+```typescript
+// Delete one user
+const deleteResult = await User.find({email: "jane@example.com"}).delete().one()
+```
+
+Delete operation can be done on model instance object too.
+```typescript
+// create and save a user
+const user = new User({name: "John Doe", email: "john@example.com"})
+await user.save()
+
+// delete it
+await user.delete()
+```
+
+### Delete and fetch
+
+Equivalent to Mongodb native sdk's `findOneAndDelete()`. Call `return()` to return the deleted document.
+```typescript
+// Delete one user and return the document
+const deletedUser = await User.find({email: "jane@example.com"}).delete().one().return()
+```
+
+## Replace a document
+
+### Replace a single document
+
+Use `find()` to filter out which document to replace, then use `replace()` to replace the document.
+```typescript
+// Update one user
+const newData = new User({email: "me@example.com", name: "Me"})
+const replaceResult = await User.find({email: "jane@example.com"}).replace(newData).one()
+```
+Replace operation is not available for multiple document in Mongodb. So calling `one()` is optional.
+
+### Replace and fetch
+Equivalent to Mongodb native sdk's `findOneAndReplace()`. Call `return()` to return the replaced document
+or the previous document based on the supplied parameter.
+```typescript
+// Replace one user and return the document
+const newData = new User({email: "me@example.com", name: "Me"})
+const user = await User.find({email: "jane@example.com"}).replace(newData).one().return()
+```
+
+## Bulk Write
+Equivalent to Mongodb native sdk's `bulkWrite()` but with a fluent API. Pass an array of `BulkOp`
+operations to `bulkWrite()` method.
+
+```typescript
+await User.bulkWrite([
+  User.BulkOp.create(), // insert one document,
+  User.BulkOp.create([]), // insert multiple document,
+  User.BulkOp.find().update(), // update multiple document
+  User.BulkOp.find().update().one(), // update one document
+  User.BulkOp.find().replace().one(), // replace one document
+  User.BulkOp.find().delete(), // delete multiple document
+  User.BulkOp.find().delete().one(), // delete one document.
+])
+```
+
+## Summary table
+
+
+| Mongodb Nodejs Native SDK Operation | Mongur style                      |
+|-------------------------------------|-----------------------------------|
+| `insert()`                          | `create()`                        |
+| `insertMany()`                      | `create([])`                      |
+| `findMany()`                        | `find()`                          |
+| `findOne()`                         | `find().one()`                    |
+| `deleteMany()`                      | `find().delete()`                 |
+| `deleteOne()`                       | `find().delete().one()`           |
+| `findOneAndDelete()`                | `find().delete().one().return()`  |
+| `updateMany()`                      | `find().update()`                 |
+| `updateOne()`                       | `find().update().one()`           |
+| `findOneAndUpdate()`                | `find().update().one().return()`  |
+| `replaceOne()`                      | `find().replace().one()`          |
+| `findOneAndReplace()`               | `find().replace().one().return()` |

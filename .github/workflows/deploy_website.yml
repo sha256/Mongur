@@ -1,0 +1,30 @@
+name: Deploy Website
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Build
+        run: |
+          cp Readme.md docs/index.mdx
+          cd docs
+          yarn install --frozen-lockfile
+          yarn build
+          yarn export
+          touch out/.nojekyll
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: docs/out

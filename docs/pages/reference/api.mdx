@@ -1,0 +1,22 @@
+import {ParameterTable} from "../../components/table";
+
+### `Model.create()`
+
+```typescript
+create(docs: Array<ModelProps<T> | T>): Promise<T[]>;
+create(doc: ModelProps<T> | T): Promise<T>;
+ ```
+
+### `Model.find()`
+
+```typescript
+find(filter: Filter<T> = {}, options?: FindOptions): FindQuery<T>
+```
+<ParameterTable options={[
+  ['filter', 'Filter<T>', 'Filter the mongodb query. See more <a href="https://mongodb.github.io/node-mongodb-native/Next/modules.html#Filter">here</a>'],
+  ['options', 'FindOptions', 'Filter the mongodb query. See more <a href="https://mongodb.github.io/node-mongodb-native/Next/modules.html#Filter">here</a>'],
+]}/>
+
+- Returns [`FindQuery<T>`](#find-query)
+
+[WIP]

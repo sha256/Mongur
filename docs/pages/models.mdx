@@ -1,0 +1,211 @@
+import { Callout, Tab, Tabs } from 'nextra-theme-docs'
+
+# Models
+
+In `Mongur` models are created by extending `Model` and using a decorator called `model` on the class. All the fields that
+will be saved in the database need to be decorated with the `field` decorator.
+
+### A basic model
+
+```typescript
+import {model, Model, field} from "mongur";
+
+
+@model()
+class User extends Model<User>() {
+
+  @field()
+  firstName!: string;
+
+  @field()
+  lastName!: string;
+
+  @field()
+  email!: string;
+
+  @field()
+  password?: string
+
+}
+```
+Learn more about [@model](/decorators/@model) and [@field](/decorators/@field).
+
+<Callout type="info">
+  Note the `()` in `ModelUser>()`. The base class is actually returned from a function call.
+</Callout>
+
+
+### Embedded documents
+
+A model can be embedded in another model in the same way as any other fields except that it's type must be specified
+in the `@field` decorator using the `type` property.
+
+```typescript
+@field({type: Publisher})
+````
+
+If it\'s an array, the type needs to be specified as an array like this:
+```typescript
+@field({type: [Author]})
+```
+
+
+Here's a complete example:
+
+```typescript
+
+import {model, Model, field} from "mongur";
+
+// An embedded document model
+
+@model
+class Publisher extends Model<Publisher> {
+  @field()
+  name?: string
+
+  @field()
+  logo?: string
+}
+
+// Another embedded document model
+
+@model
+class Author extends Model<Author>{
+  @field()
+  name?: string
+
+  @field()
+  photo?: string
+}
+
+// Main model
+
+@model
+class Book extends Model<Book>(){
+
+  @field()
+  title!: string;
+
+  @field()
+  price!: number;
+
+  @field({type: [Author]})
+  authors?: Author[]
+
+  @field({type: Publisher})
+  publisher?: Publisher
+
+}
+```
+
+Sometimes, you may not want to have an `_id` field with the sub documents. In that you can specify that in the `@field` decorator.
+```typescript
+@field({type: Publisher, _id: false})
+publisher?: Publisher
+```
+
+See all the available options in [@field](/decorators/@field).
+
+
+### Reference another model
+Referencing another model is similar to how embedding another model works except that the typescript type of the
+field need to be specified with `Ref`. The `type` property in `@field` decorator needs to be specified too just like before.
+
+
+```typescript {13}
+import {model, Model, field, Ref} from "mongur";
+
+@model
+class BlogPost extends Model<BlogPost>(){
+
+  @field()
+  title!: string;
+
+  @field()
+  body!: string;
+
+  @field({type: User})
+  author!: Ref<User>;
+
+}
+```
+
+### Use a non-model class as the field type
+You can create a custom type by extending `Factory` and implementing 2 methods:
+`parse`
+
+
+```typescript
+import {field, model, Model, Factory} from "mongur";
+
+// Our non-model class
+export class LatLng {
+  constructor(public readonly lat: number, public readonly lng: number) {
+  }
+}
+
+// A factory class to transform the data to and from db and object
+class LatLngFactory extends Factory<any, LatLng> {
+
+  // Parse value saved in the db, to the actual type
+  parse(input: any): LatLng {
+    return new LatLng(input["lat"], input["lng"])
+  }
+
+  // Covert object instance to the intended format to save in the db
+  value(input: LatLng): any {
+    return {
+      lat: input.lat,
+      lng: input.lat
+    }
+  }
+}
+
+// Actual model
+@model()
+export class City extends Model<City>() {
+
+  @field()
+  name!: string
+
+  @field({type: LatLngFactory})
+  center?: LatLng
+
+}
+```
+
+
+### Extending from a common base class
+```typescript
+
+import {model, Model, field} from "mongur";
+
+// Write your base class
+class BaseModel {
+
+  @field()
+  createdAt!: Date;
+
+  @field()
+  updatedAt!: Date;
+
+}
+
+// Write the actual model
+@model
+class Post extends Model<Post & BaseModel>(BaseModel){
+
+  @field()
+  title!: string;
+
+  @field()
+  body!: string;
+
+}
+
+interface Post extends BaseModel {}
+
+```
+
+Here, `Post & BaseModel` is for definition. `BaseModel` next to it, in parentheses, actually does the work of extending.
+Finally, `interface User extends BaseModel {}` is also for type definition. This is the only weird thing about this library (Promise!).

@@ -1,0 +1,24 @@
+{
+  "name": "mongur-docs",
+  "version": "0.0.1",
+  "license": "MIT",
+  "scripts": {
+    "docs:dev": "next dev -p 3015",
+    "build": "next build",
+    "export": "next export"
+  },
+  "dependencies": {
+    "next": "^13.1.2",
+    "nextra": "^2.2.5",
+    "nextra-theme-docs": "^2.2.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.18",
+    "autoprefixer": "^10.4.13",
+    "postcss": "^8.4.21",
+    "tailwindcss": "^3.2.4",
+    "typescript": "^4.9.4"
+  }
+}
