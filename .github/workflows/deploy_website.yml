@@ -17,7 +17,7 @@ jobs:
           node-version: 16
       - name: Build
         run: |
-          cp Readme.md docs/index.mdx
+          cp Readme.md docs/pages/index.mdx
           cd docs
           yarn install --frozen-lockfile
           yarn build
