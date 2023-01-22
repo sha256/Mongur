@@ -2,7 +2,7 @@
 Define MongoDB models and query data using Typescript/ES6 classes.
 
 
-Note: It needs a lot more tests before it's ready for use in production.
+**Note:** It needs a lot more tests before it's ready for use in production.
 
 ## Documentation
 [https://mongur.dev](https://mongur.dev)
@@ -60,26 +60,26 @@ await connetion.connect()
 
 ```
 
-#### Insert:
+**Insert:**
 
 ```typescript
 const user = new User({firstName: "John", lastName: "Doe", email: "john@example.com"})
 await user.save()
 ```
 
-#### Query:
+**Query:**
 
 ```typescript
 const user = await User.find({email: "john@example.com"}).one()
 ```
 
-#### Update:
+**Update:**
 
 ```typescript
 await User.find({email: "john@example.com"}).update({$set: {email: "john@example.net"}})
 ```
 
-#### Delete:
+**Delete**
 
 ```typescript
 await User.find({email: "john@example.com"}).delete()

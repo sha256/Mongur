@@ -2,7 +2,7 @@ import { Callout, Tab, Tabs } from 'nextra-theme-docs'
 
 # Models
 
-In `Mongur` models are created by extending `Model` and using a decorator called `model` on the class. All the fields that
+In `Mongur`, models are created by extending `Model` and using a decorator called `model` on the class. All the fields that
 will be saved in the database need to be decorated with the `field` decorator.
 
 ### A basic model
@@ -28,16 +28,16 @@ class User extends Model<User>() {
 
 }
 ```
-Learn more about [@model](/decorators/@model) and [@field](/decorators/@field).
+Learn more about [@model](/reference/decorators/@model) and [@field](/reference/decorators/@field).
 
 <Callout type="info">
-  Note the `()` in `ModelUser>()`. The base class is actually returned from a function call.
+  *Note* the parentheses in `ModelUser>()`. The base class is actually returned from a function call.
 </Callout>
 
 
 ### Embedded documents
 
-A model can be embedded in another model in the same way as any other fields except that it's type must be specified
+A model can be embedded in another model in the same way as any other fields except that its type must be specified
 in the `@field` decorator using the `type` property.
 
 ```typescript
@@ -104,11 +104,11 @@ Sometimes, you may not want to have an `_id` field with the sub documents. In th
 publisher?: Publisher
 ```
 
-See all the available options in [@field](/decorators/@field).
+See all the available options in [@field](/reference/decorators/@field).
 
 
 ### Reference another model
-Referencing another model is similar to how embedding another model works except that the typescript type of the
+Referencing another model is similar to how embedding a model works except that the typescript type of the
 field need to be specified with `Ref`. The `type` property in `@field` decorator needs to be specified too just like before.
 
 

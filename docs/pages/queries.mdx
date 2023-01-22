@@ -1,7 +1,7 @@
 import {Callout} from "nextra-theme-docs";
 
 # Queries
-Mongur provides a fluent api to query/update/delete data on Mongodb.
+Mongur provides a fluent API to query/update/delete data on Mongodb.
 
 Let's consider the following model.
 
@@ -45,10 +45,10 @@ const savedUser = await User.create(user)
 `create` class method accepts an array.
 
 ```typescript
-// returns inserted users
+// Returns inserted users
 const users = await User.create([{name: "John Doe", email: "john@example.com"}, {name: "Jane Doe", email: "jane@example.com"}])
 
-// or insert 2 object instances
+// Or insert 2 object instances
 const user1 = new User({name: "John Doe", email: "john@example.com"})
 const user2 = new User({name: "Jane Doe", email: "jane@example.com"})
 const users = await User.create([user1, user2])
@@ -129,11 +129,11 @@ const updateResult = await User.find({email: "jane@example.com"}).update({$set: 
 
 Updating can be done on model instance object too.
 ```typescript
-// create user
+// Create user
 const user = new User({name: "John Doe", email: "john@example.com"})
 await user.save()
 
-// now change something
+// Now change something and save the changes
 user.email = "doe@example.com"
 await user.save() // This will only update the changed fields.
 ```
@@ -178,11 +178,11 @@ const deleteResult = await User.find({email: "jane@example.com"}).delete().one()
 
 Delete operation can be done on model instance object too.
 ```typescript
-// create and save a user
+// Create and save a user
 const user = new User({name: "John Doe", email: "john@example.com"})
 await user.save()
 
-// delete it
+// Delete it
 await user.delete()
 ```
 
@@ -221,13 +221,13 @@ operations to `bulkWrite()` method.
 
 ```typescript
 await User.bulkWrite([
-  User.BulkOp.create(), // insert one document,
-  User.BulkOp.create([]), // insert multiple document,
-  User.BulkOp.find().update(), // update multiple document
-  User.BulkOp.find().update().one(), // update one document
-  User.BulkOp.find().replace().one(), // replace one document
-  User.BulkOp.find().delete(), // delete multiple document
-  User.BulkOp.find().delete().one(), // delete one document.
+  User.BulkOp.create(), // Insert one document,
+  User.BulkOp.create([]), // Insert multiple document,
+  User.BulkOp.find().update(), // Update multiple document
+  User.BulkOp.find().update().one(), // Update one document
+  User.BulkOp.find().replace().one(), // Replace one document
+  User.BulkOp.find().delete(), // Delete multiple document
+  User.BulkOp.find().delete().one(), // Delete one document.
 ])
 ```
 

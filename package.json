@@ -4,6 +4,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sha256/Mongur"
+  },
   "scripts": {
     "build": "rm -rf ./dist/* && tsc --project tsconfig.build.json",
     "test": "yarn jest -i"
