@@ -6,10 +6,18 @@ export interface NameToClassMap {
   [key: string]: Constructor
 }
 
+type NonMethodKeys<T> = {
+  [K in keyof T]-?: T[K] extends Function ? never : K
+}[keyof T]
+
 export type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends Array<infer U> ?
+  [P in NonMethodKeys<T>]?: T[P] extends Array<infer U> ?
     Array<DeepPartial<U>> : T[P] extends ReadonlyArray<infer U> ?
-      ReadonlyArray<DeepPartial<U>> : DeepPartial<T[P]>
+      ReadonlyArray<DeepPartial<U>>
+      : T[P] extends string ? string
+        : T[P] extends number ? number
+          : T[P] extends boolean ? boolean
+            : DeepPartial<T[P]>
 };
 
 export type ModelProps<T, U = undefined> = DeepPartial<U extends undefined ? T : T | U>

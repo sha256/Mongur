@@ -41,8 +41,10 @@ export function Model<T, U = undefined>(baseModel: BaseConstructor<Base> = Base)
       return null as any
     }
 
-    static async create(docs: Array<ModelProps<T> | T>): Promise<T[]>;
-    static async create(doc: ModelProps<T> | T): Promise<T>;
+    static async create(docs: T[]): Promise<T[]>;
+    static async create(docs: ModelProps<T>[]): Promise<T[]>;
+    static async create(doc: ModelProps<T>): Promise<T>;
+    static async create(doc: T): Promise<T>;
     static async create(docs: Array<ModelProps<T> | T> | ModelProps<T> | T , options: InsertOneOptions = {}): Promise<T[] | T>{
       return null as any
     }
