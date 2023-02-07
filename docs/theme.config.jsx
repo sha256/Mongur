@@ -1,5 +1,5 @@
 export default {
-  logo: <span>Mongur</span>,
+  logo: <b>Mongur</b>,
   project: {
     link: 'https://github.com/sha256/Mongur',
   },

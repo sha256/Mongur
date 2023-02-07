@@ -50,7 +50,7 @@ export class User extends Model<User>() {
 }
 ```
 
-#### Connect:
+**Connect:**
 
 ```typescript
 import {connection, MongoClient} from "mongur";
@@ -79,7 +79,7 @@ const user = await User.find({email: "john@example.com"}).one()
 await User.find({email: "john@example.com"}).update({$set: {email: "john@example.net"}})
 ```
 
-**Delete**
+**Delete:**
 
 ```typescript
 await User.find({email: "john@example.com"}).delete()

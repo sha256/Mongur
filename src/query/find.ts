@@ -12,15 +12,13 @@ import {Connection} from "../connection";
 import {DeleteManyQuery} from "./delete";
 import {UpdateManyQuery} from "./update";
 import {ReplaceOneQuery} from "./replace";
-import {addPrefix, KeyValue, ModelMeta} from "../common";
+import {KeyValue, ModelMeta, PrefixedField} from "../common";
 import {kBuiltOptions} from "../constant";
 
 
 export interface FindOptions extends MongoFindOptions {
   lean?: boolean
 }
-
-type Fields<T> = addPrefix<keyof T, "-" | "">
 
 
 export class BaseFindQuery<T> {
@@ -74,7 +72,7 @@ export class BaseFindQuery<T> {
    * ```
    * @param fields
    */
-  select(...fields: Fields<T>[]): this {
+  select(...fields: PrefixedField<T>[]): this {
     for(let field of fields){
       const negative = field.startsWith("-")
       this.addSelect(negative ? field.substring(1): field, negative ? 0 : 1)
@@ -113,7 +111,7 @@ export class BaseFindQuery<T> {
    * Model.find({}).sort({name: 1, age: -1})
    * ```
    */
-  sort(...fields: (Fields<T>| KeyValue)[]): this {
+  sort(...fields: (PrefixedField<T>| KeyValue)[]): this {
     this[kBuiltOptions].sort = fields.reduce((a: {[key:string]: any}, c) => {
       if (typeof c == "string"){
         const negative = c.startsWith("-")

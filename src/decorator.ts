@@ -1,4 +1,4 @@
-import {addPrefix, Constructor} from "./common";
+import {Constructor, PrefixedField} from "./common";
 import {CreateIndexesOptions, IndexDirection} from "mongodb";
 import {kModelIndexes} from "./constant";
 
@@ -23,7 +23,7 @@ export type ModelIndex<T> = {
  * @param fields
  * @param options
  */
-export function index<T>(fields: IndexFields<Partial<T>> | addPrefix<keyof T, "-" | "">[], options?: CreateIndexesOptions){
+export function index<T>(fields: IndexFields<Partial<T>> | PrefixedField<T>[], options?: CreateIndexesOptions){
   return function <T extends Constructor> (klass: T) {
     const indexes = Reflect.getMetadata(kModelIndexes, klass) || []
     if (Array.isArray(fields)){

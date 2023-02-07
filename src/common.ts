@@ -23,7 +23,8 @@ export type DeepPartial<T> = {
 export type ModelProps<T, U = undefined> = DeepPartial<U extends undefined ? T : T | U>
 export type addPrefix<TKey, TPrefix extends string> = TKey extends string ? `${TPrefix}${TKey}` : never;
 export type KeyValue = {[key: string | symbol]: any}
-export type Field<T> = keyof T
+export type Field<T> = NonMethodKeys<T>
+export type PrefixedField<T> = addPrefix<NonMethodKeys<T>, "-" | "">
 
 
 export class ModelMeta {
