@@ -32,7 +32,7 @@ function defineModelProperty(target: any, key: string, value: any) {
 }
 
 function init(_this: KeyValue, payload: KeyValue = {}, hasId: boolean = true, isNew: boolean = true) {
-  const fieldProperties: PropertiesMeta = Reflect.getMetadata(kFieldPropertiesMeta, _this) || {}
+  const fieldProperties: PropertiesMeta = Reflect.getMetadata(kFieldPropertiesMeta, _this.constructor) || {}
   const nonFieldProperties = Object.keys(payload).reduce((acc, key) => key in fieldProperties ? acc : [...acc, key], [] as string[])
 
   _this[kNew] = isNew
@@ -101,7 +101,7 @@ function jsonableRef(item: any, klass: any){
 
 
 export function toObject(_this: KeyValue, savable: boolean = false, toJson: boolean = false, fields?: Set<string>) {
-  const fieldProperties: PropertiesMeta = Reflect.getMetadata(kFieldPropertiesMeta, _this) || {}
+  const fieldProperties: PropertiesMeta = Reflect.getMetadata(kFieldPropertiesMeta, _this.constructor) || {}
   const obj: {[key: string]: any} = {}
   for(const key in fieldProperties){
     if (fields && !fields.has(key)){
@@ -116,6 +116,7 @@ export function toObject(_this: KeyValue, savable: boolean = false, toJson: bool
     }
 
     let modelClass = options.type
+
     if (!value || !modelClass){
       obj[payloadKey] = value
       continue
@@ -129,7 +130,7 @@ export function toObject(_this: KeyValue, savable: boolean = false, toJson: bool
       continue
     }
 
-    if ((modelClass as Constructor).prototype instanceof Base){
+    if ((modelClass as Constructor).prototype instanceof Base.constructor || (modelClass as Constructor).prototype instanceof Base){
       obj[payloadKey] = isArray ? value.map((item: any) => toObject(item, savable, toJson)) : toObject(value, savable, toJson)
     } else if ((modelClass as Constructor).prototype instanceof Factory){
       const ob: Factory<any, any> = Reflect.construct((modelClass as Constructor), [undefined])
@@ -138,8 +139,10 @@ export function toObject(_this: KeyValue, savable: boolean = false, toJson: bool
       obj[payloadKey] = _this[key]
     }
   }
-  if (toJson && obj.hasOwnProperty("_id") && obj["_id"]){
-    obj["_id"] = obj["_id"].toString()
+  if (toJson && _this._id){
+    obj["_id"] = _this._id.toString()
+  } else if (_this._id){
+    obj["_id"] = _this._id
   }
   return obj
 }
@@ -175,10 +178,11 @@ export function model<T>(options?: ModelOptions<T>) {
 
       async save(fields?: Field<T>[]) {
         if (this[kNew]){
-          await ModelClass.create(this)
+          const savableObject = toObject(this, true)
+          await connection.client.db().collection(modelMeta.collectionName).insertOne(savableObject as any)
+          this[kNew] = false
         } else {
           const updateDoc: any = toObject(this, true, false, fields ? new Set(fields as any) : this[kDirtyFields])
-          console.log(updateDoc)
           await ModelClass.find({_id: this._id}).update({$set: updateDoc}).one()
           this[kDirtyFields].clear()
         }

@@ -9,7 +9,14 @@ it('should save models properly', async () => {
   await staff.save()
   const retrieved = await User.find({email: "ddx@example.com"}).one()
   expect(staff.lastName).toBe(retrieved?.lastName)
+});
 
+
+it('should have same _id after saving', async () => {
+  const staff = new User({lastName: "Shamim", firstName: "Model", email: "ddx@example.com"})
+  const _id = staff._id
+  await staff.save()
+  expect(_id).toBe(staff._id)
 });
 
 

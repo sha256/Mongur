@@ -31,14 +31,14 @@ export function field(options?: FieldOptions){
     }
     const _options = Object.assign(new FieldOptions(), options || {})
 
-    const metadata: PropertiesMeta = Reflect.getMetadata(kFieldPropertiesMeta, target) || {}
+    const metadata: PropertiesMeta = Reflect.getMetadata(kFieldPropertiesMeta, target.constructor) || {}
     let _type = Reflect.getMetadata("design:type", target, propertyKey);
     metadata[propertyKey] = {
       isArray,
       isRef: _type == Ref,
       options: _options,
     }
-    Reflect.defineMetadata(kFieldPropertiesMeta, metadata, target)
+    Reflect.defineMetadata(kFieldPropertiesMeta, metadata, target.constructor)
 
     if (_options.unique || _options.index){
       const indexes = Reflect.getMetadata(kModelIndexes, target.constructor) || []
