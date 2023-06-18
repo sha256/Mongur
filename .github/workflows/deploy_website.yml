@@ -22,6 +22,9 @@ jobs:
       - name: Build
         run: |
           cp Readme.md docs/pages/index.mdx
+          sed -i 's/(https:\/\/mongur.dev/(/g' docs/pages/Readme.md
+          sed -i 's/## Documentation//g' docs/pages/Readme.md
+          sed -i 's/\[https:\/\/mongur.dev\]()//g' docs/pages/Readme.md
           cd docs
           yarn install --frozen-lockfile
           yarn build
