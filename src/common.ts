@@ -1,6 +1,7 @@
+import {Filter} from "mongodb";
 
 export type Constructor<T = any> = { new(...args: any[]): T }
-export type PropertyType = Function | Constructor | string | [Constructor]
+export type PropertyType = Function | Constructor | string | [Constructor?]
 
 export interface NameToClassMap {
   [key: string]: Constructor
@@ -34,4 +35,16 @@ export class ModelMeta {
     public readonly modelClassName: string,
   ) {}
 
+}
+
+
+export type PopulateOption = {
+  path: string,
+  select?: string[],
+  match?: Filter<any>
+  options?: {
+    limit?: number
+    perDocLimit?: number
+  },
+  populate?: PopulateOption
 }

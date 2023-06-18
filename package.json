@@ -9,7 +9,7 @@
     "url": "https://github.com/sha256/Mongur"
   },
   "scripts": {
-    "build": "rm -rf ./dist/* && tsc --project tsconfig.build.json",
+    "build": "rm -rf ./dist/* && tsc --project tsconfig.json",
     "test": "yarn jest -i"
   },
   "files": [

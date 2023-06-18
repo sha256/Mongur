@@ -1,12 +1,14 @@
 import {PropertyType} from "./common";
-import {kDirtyFields, kFieldPropertiesMeta, kModelIndexes} from "./constant";
+import {kFieldPropertiesMeta, kModelIndexes} from "./constant";
 import {ObjectId} from "mongodb";
 
 export const Ref = class Ref {}
-export type Ref<T> = T | ObjectId | string
+
+export type Ref<T> = T & {_ob?: T} | ObjectId & {_ob?: T}
 
 export class FieldOptions {
   type?: PropertyType
+  ref?: PropertyType
   default?: Function | any
   unique?: boolean = false
   index?: boolean = false
@@ -25,9 +27,17 @@ export interface PropertiesMeta {
 export function field(options?: FieldOptions){
   return function (target: any, propertyKey: string) {
     let isArray = false
+    let isRef = false
     if (options && Array.isArray(options.type)){
       options.type = options.type[0]
       isArray = true
+    } else if (options && Array.isArray(options.ref)){
+      isArray = true
+      options.type = options.ref[0]
+      isRef = true
+    } else if (options && options.ref){
+      isRef = true
+      options.type = options.ref
     }
     const _options = Object.assign(new FieldOptions(), options || {})
 
@@ -35,7 +45,7 @@ export function field(options?: FieldOptions){
     let _type = Reflect.getMetadata("design:type", target, propertyKey);
     metadata[propertyKey] = {
       isArray,
-      isRef: _type == Ref,
+      isRef: _type == Ref || isRef,
       options: _options,
     }
     Reflect.defineMetadata(kFieldPropertiesMeta, metadata, target.constructor)

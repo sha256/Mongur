@@ -169,6 +169,7 @@ export function model<T>(options?: ModelOptions<T>) {
       constructor(...args: any[]) {
         super();
         init(this, args[0], args[1])
+        this._ob = this
       }
 
       [kDirtyFields]: Set<string> = new Set();
@@ -216,7 +217,7 @@ export function model<T>(options?: ModelOptions<T>) {
         const ModelClass = getModelClass<T>(modelMeta.modelClassName)
         if (Array.isArray(docs)){
           const docObjs = docs.map(doc => doc instanceof ModelClass ? withSavedModelMetadata(doc) : new ModelClass(doc, true, true))
-          await connection.client.db().collection(modelMeta.collectionName).insertMany(docObjs as any, options)
+          await connection.client.db().collection(modelMeta.collectionName).insertMany(docObjs.map(doc => toObject(doc, true)), options)
           return docObjs
         }
         const obj: any = docs instanceof ModelClass ? withSavedModelMetadata(docs) : new ModelClass(docs, true, true)

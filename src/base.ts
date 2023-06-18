@@ -18,7 +18,7 @@ export function Model<T, U = undefined>(baseModel: BaseConstructor<Base> = Base)
      * This class is only for typing. Actual implementation is in the `model` decorator.
      */
 
-    public _id?: string | ObjectId
+    public _id!: string | ObjectId
 
     static readonly BulkOp: BulkOpBuilder<T>
 
@@ -37,6 +37,7 @@ export function Model<T, U = undefined>(baseModel: BaseConstructor<Base> = Base)
     async save(fields?: Field<T>[]): Promise<this>{
       return this
     }
+
     static find(filter: Filter<T> = {}, options?: FindOptions): FindQuery<T> {
       return null as any
     }

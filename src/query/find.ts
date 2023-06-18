@@ -12,12 +12,14 @@ import {Connection} from "../connection";
 import {DeleteManyQuery} from "./delete";
 import {UpdateManyQuery} from "./update";
 import {ReplaceOneQuery} from "./replace";
-import {KeyValue, ModelMeta, PrefixedField} from "../common";
+import {Constructor, KeyValue, ModelMeta, PopulateOption, PrefixedField} from "../common";
 import {kBuiltOptions} from "../constant";
+import {doPopulate} from "./populate";
 
 
 export interface FindOptions extends MongoFindOptions {
-  lean?: boolean
+  lean?: boolean,
+  population?: PopulateOption[]
 }
 
 
@@ -123,6 +125,19 @@ export class BaseFindQuery<T> {
     return this
   }
 
+  populate(populate: PopulateOption): this {
+    this[kBuiltOptions].population = this[kBuiltOptions].population ? [...this[kBuiltOptions].population, populate]: [populate]
+    return this
+  }
+
+  protected async doPopulate(results: T[], ModelClass: Constructor<T>){
+    if (this[kBuiltOptions].population){
+      for (let populate of this[kBuiltOptions].population){
+        await doPopulate(ModelClass, results, populate)
+      }
+    }
+  }
+
 }
 
 export class FindQuery <T> extends BaseFindQuery<T>{
@@ -133,7 +148,9 @@ export class FindQuery <T> extends BaseFindQuery<T>{
       return data
     }
     const ModelClass = getModelClass<T>(this.modelMeta.modelClassName)
-    return data.map(item => new ModelClass(item, true, false))
+    const result =  data.map(item => new ModelClass(item, true, false))
+    await this.doPopulate(result, ModelClass)
+    return result
   }
 
   then(callback: (result: T[]) => any){
@@ -210,7 +227,9 @@ export class FindOneQuery<T> extends BaseFindQuery<T> {
       return data as any
     }
     const ModelClass = getModelClass<T>(this.modelMeta.modelClassName)
-    return new ModelClass(data, true, false)
+    const result = new ModelClass(data, true, false)
+    await this.doPopulate( [result], ModelClass)
+    return result
   }
 
   orThrow() {
