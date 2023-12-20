@@ -17,21 +17,10 @@ export abstract class Factory<T, V> {
 }
 
 function defineModelProperty(target: any, key: string, value: any) {
-  let _value = value;
-  Reflect.defineProperty(target, key, {
-    get: () => _value,
-    set: newVal => {
-      if(!target[kNew] && newVal != _value){
-        target[kDirtyFields].add(key)
-      }
-      _value = newVal
-    },
-    enumerable: true,
-    configurable: true
-  })
+  target[key] = value
 }
 
-function init(_this: KeyValue, payload: KeyValue = {}, hasId: boolean = true, isNew: boolean = true) {
+function init(_this: KeyValue, payload: KeyValue = {}, hasId: boolean = true, isNew: boolean = true): any {
   const fieldProperties: PropertiesMeta = Reflect.getMetadata(kFieldPropertiesMeta, _this.constructor) || {}
   const nonFieldProperties = Object.keys(payload).reduce((acc, key) => key in fieldProperties ? acc : [...acc, key], [] as string[])
 
@@ -84,7 +73,15 @@ function init(_this: KeyValue, payload: KeyValue = {}, hasId: boolean = true, is
     }
   }
 
-  return _this
+  return new Proxy(_this, {
+    set(target: KeyValue, p: string | symbol, newValue: any): boolean {
+      if(!target[kNew] && newValue != target[p]){
+        target[kDirtyFields].add(p)
+      }
+      target[p] = newValue
+      return true
+    }
+  })
 }
 
 function savableRef(item: any){
@@ -164,12 +161,13 @@ export function model<T>(options?: ModelOptions<T>) {
     const bulkOpBuilder = new BulkOpBuilder<T>(klass.name)
     const modelMeta = new ModelMeta(collectionName, klass.name)
 
-    const newClass = class ModelClass extends klass {
+    const newClass = class Model extends klass {
 
       constructor(...args: any[]) {
         super();
-        init(this, args[0], args[1])
-        this._ob = this
+        const proxy = init(this, args[0], args[1])
+        this._ob = proxy
+        return proxy
       }
 
       [kDirtyFields]: Set<string> = new Set();
@@ -184,7 +182,7 @@ export function model<T>(options?: ModelOptions<T>) {
           this[kNew] = false
         } else {
           const updateDoc: any = toObject(this, true, false, fields ? new Set(fields as any) : this[kDirtyFields])
-          await ModelClass.find({_id: this._id}).update({$set: updateDoc}).one()
+          await Model.find({_id: this._id}).update({$set: updateDoc}).one()
           this[kDirtyFields].clear()
         }
         return this
