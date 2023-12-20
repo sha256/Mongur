@@ -14,7 +14,7 @@ export class ModelWithQueryMethod extends Model<ModelWithQueryMethod>() {
   password?: string
 
   static findByEmail(email: string){
-    return ModelWithQueryMethod.find({email: email} as any).one()
+    return this.find({email: email} as any).one()
   }
 
 }

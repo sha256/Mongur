@@ -13,6 +13,21 @@ export class Address extends Model<Address>(){
 
 
 @model()
+export class Product extends Model<Product>(){
+  @field()
+  title?: string
+}
+
+@model()
+export class User extends Model<User>(){
+  @field()
+  name?: string
+
+  @field({ref: [Product]})
+  products?: Ref<Product>[]
+}
+
+@model()
 export class ModelWithRef extends Model<ModelWithRef>() {
 
   @field({unique: true})
@@ -21,7 +36,13 @@ export class ModelWithRef extends Model<ModelWithRef>() {
   @field()
   name?: string
 
-  @field({type: Address})
+  @field({ref: Address})
   address?: Ref<Address>
+
+  @field({ref: [Product]})
+  products?: Ref<Product>[]
+
+  @field({type: [User]})
+  users?: User[]
 
 }

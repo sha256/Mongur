@@ -13,10 +13,13 @@ it('should save models properly', async () => {
 
 
 it('should have same _id after saving', async () => {
-  const staff = new User({lastName: "Shamim", firstName: "Model", email: "ddx@example.com"})
+  const staff = new User({lastName: "Shamim", firstName: "Model", email: "ddx2@example.com"})
   const _id = staff._id
-  await staff.save()
+  const saved = await staff.save()
   expect(_id).toBe(staff._id)
+  expect(_id).toBe(saved._id)
+  const retrieved = await User.find({email: "ddx2@example.com"}).one().orThrow()
+  expect(_id!.toString()).toBe(retrieved._id!.toString())
 });
 
 
@@ -49,4 +52,15 @@ it('should save and retrieve date properly', async () => {
   await datable.save()
   const retrieved = await BasicDate.find().one().orThrow()
   expect(date).toEqual(retrieved.created)
+});
+
+it('should not save extra properties', async () => {
+  const p = {lastName: "Doe", email: "withextra@example.com", extra: "extra value"}
+  const b = new Basic(p)
+  await b.save()
+  // @ts-ignore
+  const getExtra = (ob) => ob.extra
+
+  const retrieved = Basic.find({email: "withextra@example.com"}).one().orThrow()
+  expect(getExtra(retrieved)).toBeUndefined()
 });
