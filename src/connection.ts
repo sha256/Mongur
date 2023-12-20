@@ -1,4 +1,4 @@
-import {MongoClient} from "mongodb";
+import {MongoClient, MongoClientOptions} from "mongodb";
 import {kModelIndexes} from "./constant";
 import {ModelMeta} from "./common";
 
@@ -9,20 +9,25 @@ export class Connection {
   private _isConnected = false
   private _indexQueue: any[] = []
 
-  constructor(client?: MongoClient) {
-    if (client){
-      this.client = client
-    }
+  async connect(url: string, options?: MongoClientOptions): Promise<MongoClient> {
+    return this._connect(new MongoClient(url, options))
   }
 
-  set client(client: MongoClient){
+  private async _connect(client: MongoClient){
     this._client = client
     client.on("connectionReady", () => {
       this._isConnected = true
       this.processIndexQueue()
     })
+
     client.on("connectionClosed", () => {
+      this._isConnected = false
     })
+
+    client.on("commandStarted", (eventName) => {
+      //console.log(JSON.stringify(eventName, null, 2))
+    })
+    return client.connect()
   }
 
   get client(): MongoClient {
@@ -51,11 +56,6 @@ export class Connection {
         //console.log(e)
       })
     }
-  }
-
-  async connect(): Promise<MongoClient> {
-    const client = await this.client.connect()
-    return client
   }
 
   async disconnect() {

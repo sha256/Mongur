@@ -53,10 +53,8 @@ export class User extends Model<User>() {
 **Connect:**
 
 ```typescript
-import {connection, MongoClient} from "mongur";
-
-connection.client = new MongoClient("mongodb://127.0.0.1:27017/mongur", {monitorCommands: true})
-await connetion.connect()
+import {connection} from "mongur";
+await connetion.connect("mongodb://127.0.0.1:27017/mongur")
 
 ```
 
