@@ -1,15 +1,10 @@
 import {connection} from "../src";
-import { MongoMemoryServer } from 'mongodb-memory-server';
-
-let mongoServer: MongoMemoryServer
 
 beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  const conn = await connection.connect(mongoServer.getUri(), {monitorCommands: true})
-  await conn.db().dropDatabase()
+  const uri = process.env.__MONGODB_URI!
+  await connection.connect(uri, {monitorCommands: true})
 });
 
 afterAll(async () => {
   await connection.disconnect();
-  await mongoServer?.stop()
 });

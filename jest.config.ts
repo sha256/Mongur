@@ -6,7 +6,9 @@ const jestConfig: JestConfigWithTsJest ={
   testEnvironment: 'node',
   setupFilesAfterEnv: [
     "<rootDir>/test/setup.ts"
-  ]
+  ],
+  globalSetup: '<rootDir>/test/globalSetup.js',
+  globalTeardown: '<rootDir>/test/globalTeardown.js',
 }
 
 export default jestConfig
