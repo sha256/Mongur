@@ -20,7 +20,7 @@ abstract class ReplaceBaseQuery<T> {
 export class ReplaceOneQuery<T> extends ReplaceBaseQuery<T> {
 
   then(callback: (result: UpdateResult) => any){
-    this.connection?.client!.db().collection(this.modelMeta.collectionName)
+    this.connection?.client!.db().collection<any>(this.modelMeta.collectionName)
       .replaceOne(this.filter, this.replaceOptions as any).then((value) => {
       callback(value as any)
     })
@@ -46,7 +46,7 @@ export class ReplaceOneReturnQuery<T> extends ReplaceBaseQuery<T>{
 
   then(callback: (result: T) => any){
     const options = {...this.findOptions, ...this.replaceOptions}
-    this.connection?.client!.db().collection(this.modelMeta.collectionName)
+    this.connection?.client!.db().collection<any>(this.modelMeta.collectionName)
       .findOneAndReplace(this.filter, options as any).then((value) => {
       callback(value.value as any)
     })

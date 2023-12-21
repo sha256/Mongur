@@ -18,7 +18,7 @@ abstract class DeleteBaseQuery<T> {
 export class DeleteManyQuery<T> extends DeleteBaseQuery<T>{
 
   then(callback: (result: DeleteResult) => any){
-    this.connection?.client!.db().collection(this.modelMeta.collectionName)
+    this.connection?.client!.db().collection<any>(this.modelMeta.collectionName)
       .deleteMany(this.filter, this.deleteOptions as any).then((value) => {
       callback(value)
     })
@@ -37,7 +37,7 @@ export class DeleteManyQuery<T> extends DeleteBaseQuery<T>{
 export class DeleteOneQuery<T> extends DeleteManyQuery<T> {
 
   then(callback: (result: DeleteResult) => any){
-    this.connection?.client!.db().collection(this.modelMeta.collectionName)
+    this.connection?.client!.db().collection<any>(this.modelMeta.collectionName)
       .deleteOne(this.filter, this.deleteOptions as any).then((value) => {
       callback(value)
     })
@@ -57,7 +57,7 @@ export class DeleteOneReturnQuery<T> extends DeleteBaseQuery<T>{
 
   then(callback: (result: T) => any){
     const options = {...this.findOptions, ...this.deleteOptions}
-    this.connection?.client!.db().collection(this.modelMeta.collectionName)
+    this.connection?.client!.db().collection<any>(this.modelMeta.collectionName)
       .findOneAndDelete(this.filter, options as any).then((value) => {
       callback(value.value as any)
     })

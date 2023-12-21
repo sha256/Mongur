@@ -197,7 +197,7 @@ export function model<T>(options?: ModelOptions<T>) {
       }
 
       async delete(): Promise<DeleteResult> {
-        return connection.client.db().collection(modelMeta.collectionName).deleteOne({_id: this._id})
+        return connection.client.db().collection<any>(modelMeta.collectionName).deleteOne({_id: this._id})
       }
 
       static find(filter: Filter<T> = {}, options?: FindOptions): FindQuery<T> {

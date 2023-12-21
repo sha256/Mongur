@@ -208,7 +208,7 @@ export class FindQuery <T> extends BaseFindQuery<T>{
 
   async distinct(key: string, options: DistinctOptions = {}): Promise<any[]>{
     return await this.connection.client.db()
-      .collection(this.modelMeta.collectionName).distinct(key, this.filter, options)
+      .collection<any>(this.modelMeta.collectionName).distinct(key, this.filter, options)
   }
 
 }
@@ -222,7 +222,7 @@ export class FindOneQuery<T> extends BaseFindQuery<T> {
   }
 
   protected async exec(): Promise<T | null> {
-    const data = await this.connection?.client!.db().collection(this.modelMeta.collectionName).findOne(this.filter, this[kBuiltOptions])
+    const data = await this.connection?.client!.db().collection<any>(this.modelMeta.collectionName).findOne(this.filter, this[kBuiltOptions])
     if (this[kBuiltOptions].lean){
       return data as any
     }

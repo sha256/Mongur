@@ -120,7 +120,7 @@ export class BulkWrite<T> {
 
   then(callback: (result: BulkWriteResult) => any){
     Promise.all(this.ops).then(allOps => {
-      this.connection?.client!.db().collection(this.modelMeta.collectionName)
+      this.connection?.client!.db().collection<any>(this.modelMeta.collectionName)
         .bulkWrite(allOps as any).then((value) => {
         callback(value)
       })

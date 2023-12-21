@@ -20,7 +20,7 @@ export class UpdateManyQuery<T> extends UpdateBaseQuery<T>{
 
 
   then(callback: (result: UpdateResult) => any){
-    this.connection?.client!.db().collection(this.modelMeta.collectionName)
+    this.connection?.client!.db().collection<any>(this.modelMeta.collectionName)
       .updateMany(this.filter, this.updateData as any, this.updateOptions as any).then((value) => {
       callback(value as any)
     })
@@ -41,7 +41,7 @@ export class UpdateManyQuery<T> extends UpdateBaseQuery<T>{
 export class UpdateOneQuery<T> extends UpdateManyQuery<T> {
 
   then(callback: (result: UpdateResult) => any){
-    this.connection?.client!.db().collection(this.modelMeta.collectionName)
+    this.connection?.client!.db().collection<any>(this.modelMeta.collectionName)
       .updateOne(this.filter, this.updateData, this.updateOptions as any).then((value) => {
       callback(value)
     })
@@ -63,7 +63,7 @@ export class UpdateOneReturnQuery<T> extends UpdateBaseQuery<T>{
 
   then(callback: (result: T) => any){
     const options = {...this.findOptions, ...this.updateOptions}
-    this.connection?.client!.db().collection(this.modelMeta.collectionName)
+    this.connection?.client!.db().collection<any>(this.modelMeta.collectionName)
       .findOneAndUpdate(this.filter, options as any).then((value) => {
       callback(value.value as any)
     })
