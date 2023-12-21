@@ -1,7 +1,7 @@
 import type {JestConfigWithTsJest} from "ts-jest"
 
 const jestConfig: JestConfigWithTsJest ={
-  roots: ['<rootDir>'],
+  roots: ['<rootDir>/test'],
   preset: 'ts-jest',
   testEnvironment: 'node',
   setupFilesAfterEnv: [
