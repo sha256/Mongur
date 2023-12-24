@@ -1,7 +1,14 @@
 import {MongoClient, MongoClientOptions} from "mongodb";
 import {kModelIndexes} from "./constant";
-import {ModelMeta} from "./common";
 
+export class ModelMeta {
+
+  constructor(
+    public readonly collectionName: string,
+    public readonly modelClassName: string,
+  ) {}
+
+}
 
 export class Connection {
 

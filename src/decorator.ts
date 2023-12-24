@@ -1,4 +1,4 @@
-import {Constructor, PrefixedField} from "./common";
+import {Constructor, PrefixedField} from "./types";
 import {CreateIndexesOptions, IndexDirection} from "mongodb";
 import {kModelIndexes} from "./constant";
 

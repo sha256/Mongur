@@ -28,16 +28,6 @@ export type Field<T> = NonMethodKeys<T>
 export type PrefixedField<T> = addPrefix<NonMethodKeys<T>, "-" | "">
 
 
-export class ModelMeta {
-
-  constructor(
-    public readonly collectionName: string,
-    public readonly modelClassName: string,
-  ) {}
-
-}
-
-
 export type PopulateOption = {
   path: string,
   select?: string[],

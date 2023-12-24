@@ -1,5 +1,4 @@
-import {Connection} from "../connection";
-import {ModelMeta} from "../common";
+import {Connection, ModelMeta} from "../connection";
 import {DeleteOptions, DeleteResult, Filter} from "mongodb";
 import {FindOptions} from "./find";
 

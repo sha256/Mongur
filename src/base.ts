@@ -1,6 +1,6 @@
 import {AggregateOptions, Filter, InsertOneOptions, ObjectId} from "mongodb";
-import {Field, ModelProps} from "./common";
-import {BulkOp, BulkOpBuilder} from "./query/bulk.write";
+import {Field, ModelProps} from "./types";
+import {BulkOp, BulkOpBuilder, BulkWrite} from "./query/bulk.write";
 import {FindOptions, FindQuery} from "./query/find";
 import {Document} from "bson";
 
@@ -54,7 +54,7 @@ export function Model<T, U = undefined>(baseModel: BaseConstructor<Base> = Base)
       return null as any
     }
 
-    static bulkWrite(ops: BulkOp<T>[]){
+    static bulkWrite(ops: BulkOp<T>[]): BulkWrite<T>{
       return null as any
     }
   }

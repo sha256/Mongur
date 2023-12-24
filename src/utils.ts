@@ -1,4 +1,4 @@
-import {Constructor, KeyValue, NameToClassMap} from "./common";
+import {Constructor, KeyValue, NameToClassMap} from "./types";
 import {kDirtyFields, kNameToClassMap, kNew} from "./constant";
 import {Base} from "./base";
 

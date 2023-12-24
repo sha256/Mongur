@@ -8,11 +8,11 @@ import {
   UpdateOptions
 } from "mongodb";
 import {getModelClass} from "../utils";
-import {Connection} from "../connection";
+import {Connection, ModelMeta} from "../connection";
 import {DeleteManyQuery} from "./delete";
 import {UpdateManyQuery} from "./update";
 import {ReplaceOneQuery} from "./replace";
-import {Constructor, KeyValue, ModelMeta, PopulateOption, PrefixedField} from "../common";
+import {Constructor, KeyValue, PopulateOption, PrefixedField} from "../types";
 import {kBuiltOptions} from "../constant";
 import {doPopulate} from "./populate";
 

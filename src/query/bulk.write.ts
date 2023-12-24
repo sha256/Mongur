@@ -5,9 +5,9 @@ import {
   UpdateFilter,
   UpdateOptions
 } from "mongodb";
-import {Connection} from "../connection";
+import {Connection, ModelMeta} from "../connection";
 import {getModelClass} from "../utils";
-import {ModelMeta, ModelProps} from "../common";
+import {ModelProps} from "../types";
 import {toObject} from "../model";
 
 
@@ -91,8 +91,7 @@ export class BulkOpBuilder<T> {
       const obj = init instanceof ModelClass ? init : new ModelClass(init)
       resolve({
         insertOne: {
-          // @ts-ignore
-          document: toObject(obj, true)
+          document: toObject(obj as any, true)
         }
       })
     }) as any

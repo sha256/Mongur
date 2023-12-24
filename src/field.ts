@@ -1,4 +1,4 @@
-import {PropertyType} from "./common";
+import {PropertyType} from "./types";
 import {kFieldPropertiesMeta, kModelIndexes} from "./constant";
 import {ObjectId} from "mongodb";
 

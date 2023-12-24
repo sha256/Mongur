@@ -1,10 +1,10 @@
 import {kClassName, kDirtyFields, kFieldPropertiesMeta, kNameToClassMap, kNew} from "./constant";
-import type {KeyValue, Constructor, Field} from "./common";
-import {ModelMeta, ModelProps, NameToClassMap} from "./common";
+import type {KeyValue, Constructor, Field} from "./types";
+import {ModelProps, NameToClassMap} from "./types";
 import {Base} from "./base";
 import {index, ModelIndex} from "./decorator";
 import {PropertiesMeta} from "./field";
-import {Connection, connection as defaultConnection} from "./connection";
+import {Connection, connection as defaultConnection, ModelMeta} from "./connection";
 import {BulkOp, BulkOpBuilder, BulkWrite} from "./query/bulk.write";
 import {AggregateOptions, DeleteResult, Filter, InsertOneOptions, ObjectId} from "mongodb";
 import {FindOptions, FindQuery} from "./query/find";

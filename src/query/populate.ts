@@ -1,5 +1,5 @@
 import {ObjectId} from "mongodb";
-import {PopulateOption} from "../common";
+import {PopulateOption} from "../types";
 import {kFieldPropertiesMeta} from "../constant";
 import {PropertiesMeta} from "../field";
 
